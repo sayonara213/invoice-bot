@@ -1,11 +1,10 @@
 
 import express from 'express'
 import path from 'path'
-import { Markup, Telegraf } from 'telegraf'
+import { Telegraf } from 'telegraf'
 import {message} from 'telegraf/filters'
 import { Keyboard } from 'grammy'
 import { findRowByRecord, updateRowByRecord } from './google.js'
-import { log } from 'console'
 import { handleGetMessage, isPayoneerLink } from './template.js'
 import { telegramApiKey } from './config.js'
 
@@ -29,7 +28,7 @@ bot.command('start', ctx => {
     });
   })
 
-bot.on(message('sticker'), (ctx) => ctx.reply(''))
+bot.on(message('sticker'), (ctx) => ctx.reply('👋'))
 
 bot.hears('Реквізити для твого інвойсу', async (ctx) => {
     const username = ctx.from.username;
@@ -45,20 +44,21 @@ bot.hears('Реквізити для твого інвойсу', async (ctx) => 
     ctx.reply(handleGetMessage(parsedData));
 });
 
-bot.on('text', async (ctx) => {
-    log(ctx.message.text);
+bot.on(message('text'), async (ctx) => {
+    if (!ctx.message.text) {
+        return;
+    }
     const isValidLink = isPayoneerLink(ctx.message.text);
     try {
         if (isValidLink) {
             await updateRowByRecord(ctx.from.username, ctx.message.text);
             ctx.reply('Посилання збережено, дякую!');
         } else {
-            ctx.reply('Не правильне посилання на Payoneer, спробуй ще раз');
+            ctx.reply('Неправильне посилання на Payoneer, спробуй ще раз');
         }
     } catch (err) {
         ctx.reply('Помилка(');
     }
 })
 
-bot.on(message('animation'), (ctx) => console.log(ctx.message.animation))
 
