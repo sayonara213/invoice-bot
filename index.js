@@ -14,6 +14,10 @@ expressApp.use(express.json());
 
 const bot = new Telegraf(telegramApiKey);
 
+expressApp.listen(3000, () => {
+    console.log('Server started on http://localhost:3000');
+});
+
 expressApp.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
 });
