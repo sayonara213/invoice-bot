@@ -1,9 +1,9 @@
 const salaryPrettify = (salary) => {
-    return `${salary}`
-}
+  return `${salary}`;
+};
 
-export const handleGetMessage = (userData) => {
-    return `Привіт! 
+const handleGetMessage = (userData) => {
+  return `Привіт! 
 Надсилаю тобі приклад інвойсу та дані за якими тобі потрібно буде заповнити його для отримання винагороди.
 https://create.onlineinvoices.com/templates/blank-invoice-template
 
@@ -25,21 +25,25 @@ https://www.loom.com/share/ae0a53cf37894804b2d41ba3095529d4?sid=a8c9fe3f-03e1-47
 
 Коли зробиш ріквест скинь сюди, будь ласка, лінку. 
 
-дякую:)`
-}
+дякую:)`;
+};
+const isPayoneerLink = (link) => {
+  try {
+    const url = new URL(link);
 
-export const isPayoneerLink = (link) => {
-    try {
-      const url = new URL(link);
-  
-      // Check if the link is from 'link.payoneer.com' and the path starts with '/Token'
-      if (url.host === 'link.payoneer.com' && url.pathname === '/Token') {
-        return true;
-      }
-  
-      return false;
-    } catch (e) {
-      // If the link is not a valid URL, return false
-      return false;
+    // Check if the link is from 'link.payoneer.com' and the path starts with '/Token'
+    if (url.host === "link.payoneer.com" && url.pathname === "/Token") {
+      return true;
     }
+
+    return false;
+  } catch (e) {
+    // If the link is not a valid URL, return false
+    return false;
   }
+};
+
+module.exports = {
+  handleGetMessage,
+  isPayoneerLink,
+};

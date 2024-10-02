@@ -1,11 +1,13 @@
-import express from "express";
-import path from "path";
-import { Telegraf } from "telegraf";
-import { message } from "telegraf/filters";
-import { Keyboard } from "grammy";
-import { findRowByRecord, updateRowByRecord } from "./google.js";
-import { handleGetMessage, isPayoneerLink } from "./template.js";
-import { telegramApiKey } from "./config.js";
+const express = require("express");
+const path = require("path");
+require("dotenv").config();
+const { Telegraf } = require("telegraf");
+const { message } = require("telegraf/filters");
+const { Keyboard } = require("grammy");
+const { findRowByRecord, updateRowByRecord } = require("./google.js");
+const { handleGetMessage, isPayoneerLink } = require("./template.js");
+const { telegramApiKey } = require("./config.js");
+const serverless = require("serverless-http");
 
 const expressApp = express();
 expressApp.use(express.static("static"));
@@ -13,12 +15,12 @@ expressApp.use(express.json());
 
 const bot = new Telegraf(telegramApiKey);
 
-app.listen(3000, () => {
-  console.log(`Example app listening on port ${port}`);
+expressApp.listen(3000, () => {
+  console.log(`Example app listening on port ${3000}`);
 });
 
 expressApp.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname + "/index.html"));
+  res.sendFile(path.join(__dirname, "/index.html"));
 });
 
 bot.launch();
@@ -39,6 +41,12 @@ bot.hears("Реквізити для твого інвойсу", async (ctx) => 
   const username = ctx.from.username;
 
   const data = await findRowByRecord(username);
+
+  if (data === "no-user") {
+    return ctx.reply(
+      "Ти не зареєстрований у нашій таблиці, звернись до HR @svitlanamartyniuk"
+    );
+  }
 
   if (!data) {
     return ctx.reply("Інвойс не готовий, спробуй пізніше");
@@ -65,3 +73,5 @@ bot.on(message("text"), async (ctx) => {
     ctx.reply("Помилка(");
   }
 });
+
+module.exports.handler = serverless(expressApp);
