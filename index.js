@@ -7,7 +7,6 @@ const { Keyboard } = require("grammy");
 const { findRowByRecord, updateRowByRecord } = require("./google.js");
 const { handleGetMessage, isPayoneerLink } = require("./template.js");
 const { telegramApiKey } = require("./config.js");
-const serverless = require("serverless-http");
 
 const expressApp = express();
 expressApp.use(express.static("static"));
@@ -73,5 +72,3 @@ bot.on(message("text"), async (ctx) => {
     ctx.reply("Помилка(");
   }
 });
-
-module.exports.handler = serverless(expressApp);
